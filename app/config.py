@@ -4,13 +4,13 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_name: str = "Python Computer Vision API Kit"
+    app_name: str = "Python Background Worker Kit"
     app_env: str = "development"
     app_host: str = "127.0.0.1"
     app_port: int = 8000
     cors_allowed_origins: str = "http://127.0.0.1:3000,http://localhost:3000"
-    max_upload_size_mb: int = 8
-    sample_max_detections: int = 8
+    redis_url: str = "redis://127.0.0.1:6379/0"
+    worker_eager: bool = True
 
     model_config = SettingsConfigDict(
         env_file=".env",

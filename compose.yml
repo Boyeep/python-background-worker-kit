@@ -1,9 +1,54 @@
 services:
+  redis:
+    image: redis:8-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+
   api:
     build:
       context: .
       target: dev
+    command: python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      WORKER_EAGER: "false"
     ports:
       - "8000:8000"
     volumes:
       - ./app:/app/app
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      target: dev
+    command: celery -A app.worker.celery_app.celery_app worker --loglevel=info
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      WORKER_EAGER: "false"
+    volumes:
+      - ./app:/app/app
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  scheduler:
+    build:
+      context: .
+      target: dev
+    command: celery -A app.worker.celery_app.celery_app beat --loglevel=info
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      WORKER_EAGER: "false"
+    volumes:
+      - ./app:/app/app
+    depends_on:
+      redis:
+        condition: service_healthy

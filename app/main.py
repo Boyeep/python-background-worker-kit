@@ -2,8 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes.health import router as health_router
-from app.api.routes.inference import router as inference_router
-from app.api.routes.pipelines import router as pipelines_router
+from app.api.routes.jobs import router as jobs_router
 from app.config import get_settings
 
 settings = get_settings()
@@ -11,7 +10,7 @@ settings = get_settings()
 app = FastAPI(
     title=settings.app_name,
     version="0.1.0",
-    description="Computer vision starter API with typed inference responses.",
+    description="API, queue, worker, scheduler, retries, and task monitoring starter.",
 )
 
 app.add_middleware(
@@ -23,5 +22,4 @@ app.add_middleware(
 )
 
 app.include_router(health_router)
-app.include_router(pipelines_router)
-app.include_router(inference_router)
+app.include_router(jobs_router)
