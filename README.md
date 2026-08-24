@@ -1,5 +1,14 @@
 # Python Background Worker Kit
 
+[![npm version](https://img.shields.io/npm/v/%40boyeep%2Fpython-background-worker-kit)](https://www.npmjs.com/package/@boyeep/python-background-worker-kit) [![npm downloads](https://img.shields.io/npm/dm/%40boyeep%2Fpython-background-worker-kit)](https://www.npmjs.com/package/@boyeep/python-background-worker-kit) [![license](https://img.shields.io/github/license/Boyeep/python-background-worker-kit)](https://github.com/Boyeep/python-background-worker-kit/blob/main/LICENSE)
+
+Create a project directly from npm:
+
+```bash
+npx @boyeep/python-background-worker-kit my-worker-app
+```
+
+
 FastAPI + Celery + Redis starter for reliable asynchronous workloads.
 
 ## Included
