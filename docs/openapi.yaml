@@ -1,0 +1,266 @@
+openapi: 3.1.0
+info:
+  title: Python Computer Vision API Kit
+  version: 0.1.0
+  description: API contract for the detection-first computer-vision starter kit.
+servers:
+  - url: http://127.0.0.1:8000
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Health check
+      tags:
+        - health
+      responses:
+        "200":
+          description: Healthy service
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+  /api/v1/pipelines:
+    get:
+      operationId: listPipelines
+      summary: List available vision pipelines
+      tags:
+        - pipelines
+      responses:
+        "200":
+          description: Available pipelines
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PipelineCatalogResponse"
+  /api/v1/analyze:
+    post:
+      operationId: analyzeImage
+      summary: Run image analysis with the selected pipeline
+      tags:
+        - inference
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+                - pipeline_id
+              properties:
+                file:
+                  type: string
+                  format: binary
+                pipeline_id:
+                  type: string
+      responses:
+        "200":
+          description: Analysis completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyzeResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Unknown pipeline
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - app
+        - environment
+      properties:
+        status:
+          type: string
+          example: ok
+        app:
+          type: string
+          example: Python Computer Vision API Kit
+        environment:
+          type: string
+          example: development
+    PipelineSummary:
+      type: object
+      required:
+        - id
+        - name
+        - summary
+        - tags
+        - runtime
+        - sample_outputs
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        summary:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        runtime:
+          type: string
+        sample_outputs:
+          type: array
+          items:
+            type: string
+    PipelineCatalogResponse:
+      type: object
+      required:
+        - pipelines
+      properties:
+        pipelines:
+          type: array
+          items:
+            $ref: "#/components/schemas/PipelineSummary"
+    BoundingBox:
+      type: object
+      required:
+        - x
+        - y
+        - width
+        - height
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+        width:
+          type: integer
+        height:
+          type: integer
+    Detection:
+      type: object
+      required:
+        - label
+        - confidence
+        - box
+      properties:
+        label:
+          type: string
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        box:
+          $ref: "#/components/schemas/BoundingBox"
+        area_ratio:
+          type: number
+          minimum: 0
+          maximum: 1
+    PolygonPoint:
+      type: object
+      required:
+        - x
+        - y
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+    SegmentationRegion:
+      type: object
+      required:
+        - label
+        - confidence
+        - polygon
+        - box
+      properties:
+        label:
+          type: string
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        polygon:
+          type: array
+          items:
+            $ref: "#/components/schemas/PolygonPoint"
+        box:
+          $ref: "#/components/schemas/BoundingBox"
+        area_ratio:
+          type: number
+          minimum: 0
+          maximum: 1
+    Metric:
+      type: object
+      required:
+        - name
+        - value
+      properties:
+        name:
+          type: string
+        value:
+          oneOf:
+            - type: number
+            - type: integer
+            - type: string
+        unit:
+          type: string
+    ImageMetadata:
+      type: object
+      required:
+        - filename
+        - content_type
+        - width
+        - height
+      properties:
+        filename:
+          type: string
+        content_type:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+    AnalyzeResponse:
+      type: object
+      required:
+        - analysis_id
+        - pipeline
+        - image
+        - detections
+        - segmentations
+        - metrics
+        - generated_at
+      properties:
+        analysis_id:
+          type: string
+        pipeline:
+          $ref: "#/components/schemas/PipelineSummary"
+        image:
+          $ref: "#/components/schemas/ImageMetadata"
+        detections:
+          type: array
+          items:
+            $ref: "#/components/schemas/Detection"
+        segmentations:
+          type: array
+          items:
+            $ref: "#/components/schemas/SegmentationRegion"
+        metrics:
+          type: array
+          items:
+            $ref: "#/components/schemas/Metric"
+        generated_at:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string

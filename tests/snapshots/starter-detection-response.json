@@ -1,0 +1,68 @@
+{
+  "analysis_id": "<analysis-id>",
+  "pipeline": {
+    "id": "starter-detection",
+    "name": "Starter Detection",
+    "summary": "Detection-first sample pipeline that returns object-style boxes and confidence scores.",
+    "tags": [
+      "detection",
+      "default",
+      "cpu"
+    ],
+    "runtime": "opencv-cpu",
+    "sample_outputs": [
+      "object boxes",
+      "confidence scores",
+      "coverage metrics"
+    ]
+  },
+  "image": {
+    "filename": "detection-scene.png",
+    "content_type": "image/png",
+    "width": 320,
+    "height": 240
+  },
+  "detections": [
+    {
+      "label": "primary-object",
+      "confidence": 0.98,
+      "box": {
+        "x": 27,
+        "y": 33,
+        "width": 188,
+        "height": 150
+      },
+      "area_ratio": 0.3672
+    },
+    {
+      "label": "object-candidate",
+      "confidence": 0.614,
+      "box": {
+        "x": 222,
+        "y": 134,
+        "width": 73,
+        "height": 73
+      },
+      "area_ratio": 0.0694
+    }
+  ],
+  "segmentations": [],
+  "metrics": [
+    {
+      "name": "edge_density",
+      "value": 0.012,
+      "unit": null
+    },
+    {
+      "name": "object_candidates",
+      "value": 2,
+      "unit": null
+    },
+    {
+      "name": "largest_detection_ratio",
+      "value": 0.3672,
+      "unit": null
+    }
+  ],
+  "generated_at": "<generated-at>"
+}
